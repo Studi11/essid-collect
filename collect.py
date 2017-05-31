@@ -244,7 +244,7 @@ def stopmon():
         print("ifconfig -promisc error")
         return None
 
-    return wlanInterface
+    return monI
 
 def getDevices():
     devs = subprocess.check_output(["ls","/sys/class/net/"]).decode("utf-8")
