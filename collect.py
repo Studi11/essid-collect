@@ -27,6 +27,7 @@ def main():
     monInterface = startmon()
     if monInterface==None:
         stop()
+    print("monInterface: ."+monInterface+".")
     ret = makeDir()
     if ret == None:
         stop()
@@ -45,15 +46,17 @@ def startmon():
     #search device
     devs = subprocess.check_output(['ifconfig']).decode("utf-8")
     devs = devs.splitlines()
-    monInterface = ""
+    monInterface = []
     for line in devs:
-        if line.find("wlp")==0 or line.find("wlan")==0:
+        if line.find("mon")>=0 or line.find("wlp")==0 or line.find("wlan")==0:
             if line.find("PROMISC")>=0:
-                monInterface = re.search(".+?(:|\s)",line).group()[:-1]
-                print("1Monitor interface: ."+monInterface+".")
-                break
-    if monInterface != "":
-        return monInterface
+                monInterface.append(re.search(".+?(:|\s)",line).group()[:-1])
+                print("1Monitor interface: ."+line+".")
+    if len(monInterface)>0:
+        for i in monInterface:
+            if i.find("mon")>=0:
+                return i
+        return monInterface[0]
 
     # start monitor interface
     wlanInterface = ""
@@ -76,15 +79,17 @@ def startmon():
 
     devs = subprocess.check_output(['ifconfig']).decode("utf-8")
     devs = devs.splitlines()
-    monInterface = ""
+    monInterface = []
     for line in devs:
-        if line.find("wlp")==0 or line.find("wlan")==0:
+        if line.find("mon")>=0 or line.find("wlp")==0 or line.find("wlan")==0:
             if line.find("PROMISC")>=0 or True:
-                monInterface = re.search(".+?(:|\s)",line).group()[:-1]
-                print("2Monitor interface: "+monInterface)
-                break
-    if monInterface != "":
-        return monInterface
+                monInterface.append(re.search(".+?(:|\s)",line).group()[:-1])
+                print("2Monitor interface: ."+line+".")
+    if len(monInterface)>0:
+        for i in monInterface:
+            if i.find("mon")>=0:
+                return i
+        return monInterface[0]
     else:
         return None
 
