@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-# import click
 import subprocess
 import re
 import os
@@ -8,14 +7,13 @@ import sys
 import signal
 from time import sleep
 from datetime import datetime
-from shutil import copyfile
 
 # variables
 folder = "/usr/share/essid-collect/"
 collecting_file = "collecting"
 essids_file = "essids.csv"
 essids = {}
-# essids["testWlan"]=["01-01-2017","ap","client","macs"]
+# essids["testWlan"]=["01-01-2017","ap","client§","macs"]
 
 
 def signal_handler(signal, frame):
@@ -23,8 +21,6 @@ def signal_handler(signal, frame):
         stop()
 signal.signal(signal.SIGINT, signal_handler)
 
-#@click.command()
-# @click.option('--','-', help="")
 def main():
 
     print("in the works!!")
@@ -107,8 +103,7 @@ def makeDir():
 
 def startdump(monInterface):
     print("startdump")
-    p = subprocess.Popen(['airodump-ng','-w',os.path.join(folder,collecting_file),'--output-format','csv',monInterface], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-    #print(p.communicate())
+    p = subprocess.Popen(['airodump-ng','-w',os.path.join(folder,collecting_file),'--output-format','csv',monInterface], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     return p
 
 def collecting():
