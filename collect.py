@@ -49,8 +49,8 @@ def startmon():
     for line in devs:
         if line.find("wlp")>=0 or line.find("wlan")>=0:
             if line.find("PROMISC"):
-                monInterface = re.search(".+:",line).group()[:-1]
-                print("Monitor interface: "+monInterface)
+                monInterface = re.search(".+?(:|\s)",line).group()[:-1]
+                print("Monitor interface: ."+monInterface+".")
                 break
     if monInterface != "":
         return monInterface
