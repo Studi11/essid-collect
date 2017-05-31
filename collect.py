@@ -13,7 +13,7 @@ folder = "/usr/share/essid-collect/"
 collecting_file = "collecting"
 essids_file = "essids.csv"
 essids = {}
-# essids["testWlan"]=["01-01-2017","ap","client§","macs"]
+# essids["testWlan"]=["01-01-2017","ap","client","macs"]
 
 
 def signal_handler(signal, frame):
