@@ -47,10 +47,10 @@ def startmon():
     devs = devs.splitlines()
     monInterface = ""
     for line in devs:
-        if line.find("wlp")>=0 or line.find("wlan")>=0:
-            if line.find("PROMISC"):
+        if line.find("wlp")==0 or line.find("wlan")==0:
+            if line.find("PROMISC")>=0:
                 monInterface = re.search(".+?(:|\s)",line).group()[:-1]
-                print("Monitor interface: ."+monInterface+".")
+                print("1Monitor interface: ."+monInterface+".")
                 break
     if monInterface != "":
         return monInterface
@@ -66,8 +66,10 @@ def startmon():
         return None
 
     needsRoot()
-    p = subprocess.Popen(['ifconfig',wlanInterface,'promisc'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # p = subprocess.Popen(['ifconfig',wlanInterface,'promisc'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(['airmon-ng','start',wlanInterface], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.communicate()
+    p.wait()
     if p.returncode==1:
         print("ifconfig promisc error")
         return None
@@ -76,10 +78,10 @@ def startmon():
     devs = devs.splitlines()
     monInterface = ""
     for line in devs:
-        if line.find("wlp")>=0 or line.find("wlan")>=0:
-            if line.find("PROMISC"):
-                monInterface = re.search(".+:",line).group()[:-1]
-                print("Monitor interface: "+monInterface)
+        if line.find("wlp")==0 or line.find("wlan")==0:
+            if line.find("PROMISC")>=0 or True:
+                monInterface = re.search(".+?(:|\s)",line).group()[:-1]
+                print("2Monitor interface: "+monInterface)
                 break
     if monInterface != "":
         return monInterface
@@ -222,7 +224,8 @@ def stopmon():
         return None
 
     needsRoot()
-    p = subprocess.Popen(['ifconfig',wlanInterface,'-promisc'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # p = subprocess.Popen(['ifconfig',wlanInterface,'-promisc'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(['airmon-ng','stop',wlanInterface], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.communicate()
     if p.returncode==1:
         print("ifconfig -promisc error")
