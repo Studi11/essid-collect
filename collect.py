@@ -164,8 +164,12 @@ def stopcollecting():
 
 def unionessids():
     print("unionessids")
-    try:
-        fi = open(os.path.join(folder, essids_file),"r")
+
+    for f in os.listdir(folder):
+        if f.find(essids_file)<0:
+            continue
+
+        fi = open(os.path.join(folder, f),"r")
         r = fi.read().splitlines()
         fi.close()
         # essids["testWlan"]=["01-01-2017","ap","client","macs"]
@@ -182,8 +186,6 @@ def unionessids():
             for i in line[4:]:
                 if len(i)>=1:
                     essids[line[0]]['mac'].add(i)
-    except FileNotFoundError:
-        print("file not found")
 
 def writeessidsfile():
     print("writeessidsfile")
