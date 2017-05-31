@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import click
+# import click
 import subprocess
 import re
 import os
@@ -23,7 +23,7 @@ def signal_handler(signal, frame):
         stop()
 signal.signal(signal.SIGINT, signal_handler)
 
-@click.command()
+#@click.command()
 # @click.option('--','-', help="")
 def main():
 
