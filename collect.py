@@ -5,6 +5,7 @@ import re
 import os
 import sys
 import signal
+import tempfile
 from time import sleep
 from datetime import datetime
 
@@ -20,6 +21,7 @@ def signal_handler(signal, frame):
         print('\n stopping')
         stop()
 signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 def main():
 
@@ -51,7 +53,7 @@ def startmon():
         if line.find("mon")>=0 or line.find("wlp")==0 or line.find("wlan")==0:
             if line.find("PROMISC")>=0:
                 monInterface.append(re.search(".+?(:|\s)",line).group()[:-1])
-                print("1 potential monitor interface: ."+line+".")
+                print("1 potential monitor interface: ."+re.search(".+?(:|\s)",line).group()[:-1]+".")
     if len(monInterface)>0:
         for i in monInterface:
             if i.find("mon")>=0:
@@ -84,7 +86,7 @@ def startmon():
         if line.find("mon")>=0 or line.find("wlp")==0 or line.find("wlan")==0:
             if line.find("PROMISC")>=0 or True:
                 monInterface.append(re.search(".+?(:|\s)",line).group()[:-1])
-                print("2 potential monitor interface: ."+line+".")
+                print("2 potential monitor interface: ."+re.search(".+?(:|\s)",line).group()[:-1]+".")
     if len(monInterface)>0:
         for i in monInterface:
             if i.find("mon")>=0:
@@ -110,7 +112,8 @@ def makeDir():
 
 def startdump(monInterface):
     print("startdump")
-    p = subprocess.Popen(['airodump-ng','-w',os.path.join(folder,collecting_file),'--output-format','csv',monInterface], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    purgeFiles(folder, collecting_file+".*\.csv")
+    p = subprocess.Popen(['airodump-ng','-w',os.path.join(folder,collecting_file),'--output-format','csv',monInterface], stdout=tempfile.TemporaryFile(), stderr=subprocess.STDOUT)
     return p
 
 def collecting():
@@ -216,6 +219,12 @@ def stopdump():
     p = subprocess.Popen(['killall','airodump-ng'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     purgeFiles(folder, collecting_file+".*\.csv")
 
+def getMonInterface():
+    print("getMonInterface")
+    devs = subprocess.check_output(['ifconfig']).decode("utf-8")
+    devs = devs.splitlines()
+    monInterface = []
+
 def stopmon():
     print("stopmon")
     # stop monitor interface
@@ -226,7 +235,7 @@ def stopmon():
         if line.find("mon")>=0 or line.find("wlp")==0 or line.find("wlan")==0:
             if line.find("PROMISC")>=0 or True:
                 monInterface.append(re.search(".+?(:|\s)",line).group()[:-1])
-                print("2 potential monitor interface: ."+line+".")
+                print("3 potential monitor interface: ."+re.search(".+?(:|\s)",line).group()[:-1]+".")
     monI = ""
     if len(monInterface)>0:
         for i in monInterface:
